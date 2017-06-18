@@ -2,7 +2,7 @@
   "Debugging helpers.
 
   < appended to a name means that the value is \"passed through\" the open paren,
-  this means that you can drop these in anywhere, and they won't change how the
+  meaning that you can drop these in anywhere without changing how the
   rest of the code works.
 
   This ns should not be required anywhere in a clojurescript prod
@@ -31,23 +31,22 @@
   a (atom {}))
 
 (defn a<
-  "Put something in the debugging atom, a map, under k. If no key supplied,
-  v is assoced under ::default. The value is returned,
-  so that you can wrap this around anything."
+  "Put something in the debugging atom, a map, at k.
+  k defaults to :hugin.dbg/default. Returns v."
   ([v] (a< ::default v))
   ([k v] (swap! a assoc k v) v))
 
 (defn a>
-  "Get something from the debugging atom, k defaults to ::default and if nothing
-  is found ::nothing is returned."
+  "Get something from the debugging atom, k defaults to :hugin.dbg/default
+  If nothing is found then :hugin.dbg/nothing is returned."
   ([] (a> ::default))
   ([k] (get @a k ::nothing)))
 
 (defn aconj<
-  "Put something in a vector in the debugging atom, under k.
-  k defaults to ::default.
+  "Put something in a vector in the debugging atom, at k.
+  k defaults to :hugin.dbg/default.
   Like a<, v is returned, so you can wrap this around anything.
-  Useful for collecting every value as you go
+  Useful for collecting each value as you go
   through a loop, reduce, map or similar."
   ([v] (aconj< ::default v))
   ([k v] (swap! a update-in [k] (fnil conj []) v) v))
@@ -55,8 +54,8 @@
 (defn a>> "The whole debug atom, aka @a" [] @a)
 
 (defn diss
-  "Dissocs the value under k in the debugging atom. Defaults to ::default.
-   Returns the value dissoced."
+  "Dissocs the value at k in the debugging atom. Defaults to :hugin.dbg/default.
+   Returns the value that was dissoced."
   ([] (diss ::default))
   ([k]
    (let [v (a> k)]
