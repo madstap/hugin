@@ -64,3 +64,9 @@
 
 (defn nuke "Resets the dbg atom to an empty map." []
   (reset! a {}))
+
+(defn ppre
+  "Pretty-print x inside a pre tag (hiccup-style)."
+  [x]
+  [:pre {:style {:white-space :pre-wrap}} ; Vertical scroll is not cool...
+   (with-out-str (pprint x))])
