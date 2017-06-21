@@ -10,10 +10,18 @@
   (:require
    [clojure.pprint :refer [pprint]]))
 
+(defn- rev-args
+  "Takes a function and returns it with the arguments reversed."
+  [f]
+  (fn [& args]
+    (apply f (reverse args))))
+
+
 (defn println-debugger [print-fn]
   (fn
     ([x] (print-fn x) x)
     ([msg x] (println (str msg \newline (with-out-str (print-fn x)))) x)))
+
 
 (def ^{:arglists '([x] [msg x])
        :doc
@@ -26,6 +34,16 @@
        "Prints x using pprint, then returns it.
   Takes an optional message as the first argument."}
   pp< (println-debugger pprint))
+
+
+(def ^{:arglists '([x] [x msg])
+       :doc "Like p<, but with the arguments reversed. For use inside a ->"}
+  p<- (rev-args p<))
+
+(def ^{:arglists '([x] [x msg])
+       :doc "Like pp<, but with the arguments reversed. For use inside a ->"}
+  pp<- (rev-args pp<))
+
 
 (defonce ^{:doc "An atom containing a map to store debugging stuff in."}
   a (atom {}))
@@ -50,6 +68,15 @@
   through a loop, reduce, map or similar."
   ([v] (aconj< ::default v))
   ([k v] (swap! a update-in [k] (fnil conj []) v) v))
+
+(def ^{:arglists '([v] [v k])
+       :doc "Like a<, but with the arguments reversed. For use inside a ->"}
+  a<- (rev-args a<))
+
+(def ^{:arglists '([v] [v k])
+       :doc "Like aconj<, but with the arguments reversed. For use inside a ->"}
+  aconj<- (rev-args aconj<))
+
 
 (defn a>> "The whole debug atom, aka @a" [] @a)
 
