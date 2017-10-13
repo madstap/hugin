@@ -108,3 +108,18 @@
   [x]
   [:pre {:style {:white-space :pre-wrap}} ; Vertical scroll is not cool...
    (with-out-str (pprint x))])
+
+(defmacro def<
+  ([name]
+   `(do (def ~name ~name) ~name))
+  ([name expr]
+   `(let [x# ~expr]
+      (def ~name x#)
+      x#)))
+
+;; TODO: defconj< ?
+
+(defmacro def<- [expr name]
+  `(let [x# ~expr]
+     (def ~name x#)
+     x#))
