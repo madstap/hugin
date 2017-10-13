@@ -59,9 +59,11 @@
 
 (defn a<
   "Put something in the debugging atom, a map, at k.
-  k defaults to :hugin.dbg/default. Returns v."
+  k defaults to :hugin.dbg/default. Returns v.
+  Can take multiple key-value pairs, in which case the first value is returned."
   ([v] (a< ::default v))
-  ([k v] (swap! a assoc k v) v))
+  ([k v] (swap! a assoc k v) v)
+  ([k v & kvs] (apply swap! a assoc k v kvs) v))
 
 (defn a>
   "Get something from the debugging atom, k defaults to :hugin.dbg/default
