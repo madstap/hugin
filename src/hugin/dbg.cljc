@@ -3,10 +3,7 @@
 
   < appended to a name means that the value is \"passed through\" the open paren,
   meaning that you can drop these in anywhere without changing how the
-  rest of the code works.
-
-  This ns should not be required anywhere in a clojurescript prod
-  build as requiring pprint adds a lot of non DCEable code."
+  rest of the code works."
   (:require
    [clojure.pprint :refer [pprint]]))
 
@@ -16,12 +13,13 @@
   (fn [& args]
     (apply f (reverse args))))
 
+;;;;;;;;;;;;;;;;;;;;
+;; Printing
 
 (defn println-debugger [print-fn]
   (fn
     ([x] (print-fn x) x)
     ([msg x] (println (str msg \newline (with-out-str (print-fn x)))) x)))
-
 
 (def ^{:arglists '([x] [msg x])
        :doc
@@ -35,7 +33,6 @@
   Takes an optional message as the first argument."}
   pp< (println-debugger pprint))
 
-
 (def ^{:arglists '([x] [x msg])
        :doc "Like p<, but with the arguments reversed. For use inside a ->"}
   p<- (rev-args p<))
@@ -44,6 +41,8 @@
        :doc "Like pp<, but with the arguments reversed. For use inside a ->"}
   pp<- (rev-args pp<))
 
+;;;;;;;;;;;;;;;;;;;;
+;; Debug atom
 
 (defonce ^{:doc "An atom containing a map to store debugging stuff in."}
   a (atom {}))
@@ -63,13 +62,13 @@
   ([k] (get @a k ::nothing)))
 
 (defn aconj<
-  "Put something in a vector in the debugging atom, at k.
+  "Put a succession of values in a vector in the debugging atom, at k.
   k defaults to :hugin.dbg/default.
   Like a<, v is returned, so you can wrap this around anything.
   Useful for collecting each value as you go
   through a loop, reduce, map or similar."
   ([v] (aconj< ::default v))
-  ([k v] (swap! a update-in [k] (fnil conj []) v) v))
+  ([k v] (swap! a update k (fnil conj []) v) v))
 
 (def ^{:arglists '([v] [v k])
        :doc "Like a<, but with the arguments reversed. For use inside a ->"}
@@ -78,7 +77,6 @@
 (def ^{:arglists '([v] [v k])
        :doc "Like aconj<, but with the arguments reversed. For use inside a ->"}
   aconj<- (rev-args aconj<))
-
 
 (defn a>> "The whole debug atom, aka @a" [] @a)
 
@@ -94,6 +92,9 @@
 (defn nuke "Resets the dbg atom to an empty map." []
   (reset! a {}))
 
+;;;;;;;;;;;;;;;;;;;;;;;;
+;; Misc
+
 (defn ppre
   "Pretty-print x inside a pre tag (hiccup-style)."
   [x]
@@ -101,16 +102,22 @@
    (with-out-str (pprint x))])
 
 (defmacro def<
-  ([name]
-   `(do (def ~name ~name) ~name))
-  ([name expr]
+  {:arglists '([name] [name expr])}
+  ([n]
+   {:pre [(symbol? n)]}
+   (let [name-sym (symbol (name n))]
+     `(do (def ~name-sym ~n)
+          ~n)))
+  ([n expr]
    `(let [x# ~expr]
-      (def ~name x#)
+      (def ~n x#)
       x#)))
 
 ;; TODO: defconj< ?
 
-(defmacro def<- [expr name]
+(defmacro def<-
+  {:arglists '([expr name])}
+  [expr n]
   `(let [x# ~expr]
-     (def ~name x#)
+     (def ~n x#)
      x#))
