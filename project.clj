@@ -1,4 +1,4 @@
-(defproject madstap/hugin "0.1.3"
+(defproject madstap/hugin "0.1.4"
   :description "Some simple helpers for debugging."
   :url "https://github.com/madstap/hugin"
   :license {:name "Eclipse Public License"
