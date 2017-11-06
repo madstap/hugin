@@ -59,7 +59,8 @@
   "Get something from the debugging atom, k defaults to :hugin.dbg/default
   If nothing is found then :hugin.dbg/nothing is returned."
   ([] (a> ::default))
-  ([k] (get @a k ::nothing)))
+  ([k] (get @a k ::nothing))
+  ([k & ks] (mapv a> (cons k ks))))
 
 (defn aconj<
   "Put a succession of values in a vector in the debugging atom, at k.
