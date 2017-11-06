@@ -45,15 +45,6 @@
   pp<- (rev-args pp<))
 
 
-#?(:cljs
-   (def ^{:arglists '([x] [msg x])}
-     alert< (println-debugger js/alert)))
-
-#?(:cljs
-   (def ^{:arglists '([x] [x msg])}
-     alert<- (rev-args alert<)))
-
-
 (defonce ^{:doc "An atom containing a map to store debugging stuff in."}
   a (atom {}))
 
