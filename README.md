@@ -11,6 +11,8 @@
 This is my preferred way of debugging clojure. It's a couple of simple tricks
 wrapped in some functions for ergonomics and terseness.
 
+[Introductory blog post](https://madstap.github.io/posts/dbg/).
+
 ## Usage
 
 You can add this to a specific project, or like I do, add it to your
@@ -56,9 +58,6 @@ All functions with a `<` suffix has a `<-` equivalent.
 `dbg/p<` and `dbg/pp<` can take an optional message as the first argument,
 so that if you have multiple expressions that you want printed you can distinguish
 between them.
-
-The `<-` versions take the message as the (optional) last argument, so they
-can be used from within a `->`.
 
 The `dbg/println-debugger` function takes a printing function and returns a
 function like `dbg/p<`, so you can make your own.
