@@ -73,9 +73,14 @@
   k defaults to :hugin.dbg/default.
   Like a<, v is returned, so you can wrap this around anything.
   Useful for collecting each value as you go
-  through a loop, reduce, map or similar."
+  through a loop, reduce, map or similar.
+  Can take multiple key-value pairs, in which case the first value is returned."
   ([v] (aconj< ::default v))
-  ([k v] (swap! a update k (fnil conj []) v) v))
+  ([k v] (swap! a update k (fnil conj []) v) v)
+  ([k v & kvs]
+   {:pre [(even? (count kvs))]}
+   (doseq [[k' v'] (partition 2 kvs)] (aconj< k' v'))
+   (aconj< k v)))
 
 (def ^{:arglists '([v] [v k])
        :doc "Like a<, but with the arguments reversed. For use inside a ->"}
