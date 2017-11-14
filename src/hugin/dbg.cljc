@@ -56,7 +56,10 @@
   Can take multiple key-value pairs, in which case the first value is returned."
   ([v] (a< ::default v))
   ([k v] (swap! a assoc k v) v)
-  ([k v & kvs] (apply swap! a assoc k v kvs) v))
+  ([k v & kvs]
+   {:pre [(even? (count kvs))]}
+   (apply swap! a assoc k v kvs)
+   v))
 
 (defn a>
   "Get something from the debugging atom, k defaults to :hugin.dbg/default
