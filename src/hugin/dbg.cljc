@@ -8,10 +8,13 @@
    [clojure.pprint :refer [pprint]]))
 
 (defn- rev-args
-  "Takes a function and returns it with the arguments reversed."
+  "Takes a function or arity one and two and
+  returns it with the arity two reversed."
   [f]
-  (fn [& args]
-    (apply f (reverse args))))
+  (fn
+    ([x] (f x))
+    ([k x] (f x k))))
+
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Printing
