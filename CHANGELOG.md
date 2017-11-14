@@ -1,7 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [Unreleased] - 2017-??-??
+## [Unreleased] - 201?-??-??
+
+## [0.1.5] - 2017-11-14
 ## Added
 - Variable arity for aconj<
 

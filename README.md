@@ -21,12 +21,12 @@ global `:user` profile.
 Specific project: `foo/project.clj`
 ```clojure
 (defproject foo ,,,
-  :profiles {:dev {:dependencies [[madstap/hugin "0.1.4"]]}})
+  :profiles {:dev {:dependencies [[madstap/hugin "0.1.5"]]}})
 ```
 
 Globally: `~/.lein/profiles.clj`
 ```clojure
-{:user {:plugins [,,,], :dependencies [[madstap/hugin "0.1.4"]]}}
+{:user {:plugins [,,,], :dependencies [[madstap/hugin "0.1.5"]]}}
 ```
 
 Then use it in your namespace:
@@ -34,7 +34,7 @@ Then use it in your namespace:
 ```clojure
 (ns foo.core
   (:require
-   ;; WARNING: Remove this before committing.
+   ;; TODO: Remove this before committing.
    [hugin.dbg :as dbg]))
 ```
 
