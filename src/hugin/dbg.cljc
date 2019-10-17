@@ -5,7 +5,17 @@
   meaning that you can drop these in anywhere without changing how the
   rest of the code works."
   (:require
-   [clojure.pprint :refer [pprint]]))
+   [clojure.pprint :refer [pprint]]
+   #?@(:clj
+       [[clojure.edn :as edn]
+        [clojure.data.json :as json]]))
+  #?(:clj
+     (:import
+      (java.awt Toolkit HeadlessException)
+      (java.awt.datatransfer StringSelection
+                             DataFlavor
+                             UnsupportedFlavorException)
+      (java.io.IOException))))
 
 (defn- rev-args
   "Takes a function or arity one and two and
@@ -133,3 +143,106 @@
   `(let [x# ~expr]
      (def ~n x#)
      x#))
+
+
+(defn pp-str [x]
+  (with-out-str (pprint x)))
+
+#?(:clj
+   (defn clip* [s]
+     (-> (Toolkit/getDefaultToolkit)
+         (.getSystemClipboard)
+         (.setContents (StringSelection. s) nil))))
+
+#?(:clj
+   (defn clip< [x]
+     (clip* (str x))
+     x))
+
+#?(:clj
+   (defn clip>
+     "Get contents of clipboard."
+     []
+     (-> (Toolkit/getDefaultToolkit)
+         .getSystemClipboard
+         (.getData DataFlavor/stringFlavor))))
+
+#?(:clj
+   (defn clipr>
+     "Read contents of clipboard."
+     []
+     (edn/read-string (clip>))))
+
+#?(:clj
+   (defn clipe>
+     "Eval contents of clipboard."
+     []
+     (eval (clipr>))))
+
+#?(:clj
+   (defn clipj>
+
+     []
+     (json/read-str (clip>) :key-fn keyword)))
+
+#?(:clj
+   (defn clipj< [x]
+     (clip* (json/write-str x))
+     x))
+
+#?(:clj
+   (defn clipjp< [x]
+     (clip* (with-out-str (json/pprint x)))
+     x))
+
+#?(:clj
+   (defn clipr< [x]
+     (clip* (pr-str x))
+     x))
+
+#?(:clj
+   (defn cliprn< [x]
+     (clip* (prn-str x))
+     x))
+
+#?(:clj
+   (defn clipp< [x]
+     (clip* (pp-str x))
+     x))
+
+(comment
+
+  (require '[clojure.test :refer [deftest is]])
+
+  (let [x {:foo 12}]
+    (clipj< x)
+    (is (= x (json/read-str (clip>) :key-fn keyword)))
+    (clipjp< x)
+    (is (= x (clipj>)))
+    (let [x-str (json/write-str x)]
+      (clip< x-str)
+      (is (= x-str (clip>)))
+      (is (= x (clipj>)))))
+
+  (clip>)
+
+  (clip>)
+  (clipj>)
+
+  (clipr>)
+
+  (clipjp< (repeat 20 {:foo 12}))
+
+  (clip< "foo")
+
+  (clip< "(def foo 12)")
+
+  (clipr< '(def foo 12))
+
+  (clip>)
+
+  (clipr>)
+
+  (clipe>)
+
+  )
